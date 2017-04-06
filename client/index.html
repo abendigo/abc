@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <script src="https://marko.dev.oanda.com:8080/socket.io/socket.io.js"></script>
+        <script>
+            let socket = io('https://marko.dev.oanda.com:8080');
+            console.log('socket', socket);
+
+            socket.on('message', data => {
+                console.log('message', data);
+            });
+
+            socket.on('disconnect', reason => {
+                console.log('disconnect', reason);
+            });
+
+            socket.on('disconnecting', reason => {
+                console.log('disconnecting', reason);
+            });
+
+            socket.on('error', error => {
+                console.log('error', error);
+            });
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

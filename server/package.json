@@ -1,0 +1,9 @@
+{
+  "name": "marko",
+  "dependencies": {
+    "socket.io": "^1.7.3"
+  },
+  "devDependencies": {
+    "supervisor": "^0.12.0"
+  }
+}
