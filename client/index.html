@@ -1,7 +1,12 @@
 <html>
     <head>
-        <script src="https://localhost:8080/socket.io/socket.io.js"></script>
+        <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+        <!--<script src="https://localhost:8080/socket.io/socket.io.js"></script>-->
+
+        <!--<link rel="import" href="/bower_components/polymer/polymer.html">-->
+        <link rel="import" href="/bower_components/polymer/lib/elements/dom-bind.html">
         <script>
+/*
             let socket = io('https://localhost:8080');
             console.log('socket', socket);
 
@@ -24,8 +29,28 @@
             socket.on('users', users => {
                 console.log('users', users);
             });
+*/
         </script>
     </head>
     <body>
+        <h1>Hello</h1>
+
+        <dom-bind>
+            <template>
+                Username: [[username]]
+            </template>
+        </dom-bind>
+
+        <script>
+            let autobind = document.querySelector('dom-bind');
+
+            // The dom-change event signifies when the template has stamped its DOM.
+            autobind.addEventListener('dom-change', function() {
+                console.log('template is ready.')
+            });
+
+
+            autobind.username = 'marko';
+        </script>
     </body>
 </html>

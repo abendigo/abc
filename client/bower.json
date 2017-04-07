@@ -1,1 +1,6 @@
-{"name":"marko"}
+{
+  "name": "marko",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0-rc.3"
+  }
+}
