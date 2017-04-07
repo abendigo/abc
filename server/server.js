@@ -40,6 +40,9 @@ io.on('connection', socket => {
 
     socket.on('disconnecting', reason => {
         console.log('disconnecting', reason);
+
+        delete users[socket.id];
+        io.sockets.emit('users', users);
     });
 
     socket.on('error', error => {
