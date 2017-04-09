@@ -1,0 +1,106 @@
+<script src="https://localhost:8080/socket.io/socket.io.js"></script>
+
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<dom-module id="abc-client-app">
+  <template>
+    ID: [[identity]]<br />Username: [[username]]<br />
+    <input on-change="_usernameChanged" />
+
+    <template is="dom-repeat" items="[[_toArray(users)]]" filter="_filter">
+      <h2>===============================================</h2>
+      <div>[[item.key]]: [[item.value.username]]</div>
+      <template is="dom-repeat" items="[[_getMessages(item.key, messages)]]">
+            [[item]]<br />
+      </template>
+      <input id=[[item.key]] on-change="_messageChanged" />
+    </template>
+  </template>
+
+  <script>
+    class AbcClientApp extends Polymer.Element {
+        static get is() {return "abc-client-app";}
+
+        static get properties() {
+            return {
+                username: {
+                    type: String,
+                    value: "anonymous"
+                },
+                messages: {
+                    type: Object,
+                    value: {}
+                }
+            }
+        }
+
+        updateMessages(id, message) {
+            let copy = JSON.parse(JSON.stringify(this.messages));
+            if (!copy[id])
+                copy[id] = [];
+            copy[id].push(message);
+
+            this.messages = copy;
+        }
+
+        connectedCallback() {
+            super.connectedCallback();
+
+            this.socket = io('https://localhost:8080');
+
+            this.socket.on('message', data => {
+                this.updateMessages(data.from, `<< ${data.value}`);
+            });
+
+            this.socket.on('connect', _ => {
+                this.identity = this.socket.id;
+            });
+
+            // this.socket.on('disconnect', reason => {
+            //     console.log('disconnect', reason);
+            // });
+
+            // this.socket.on('disconnecting', reason => {
+            //     console.log('disconnecting', reason);
+            // });
+
+            // this.socket.on('error', error => {
+            //     console.log('error', error);
+            // });
+
+            this.socket.on('users', users => {
+                this.users = users;
+            });
+        }
+
+        _toArray(obj) {
+            return Object.keys(obj).map(key => {
+                return {key, value: obj[key]};
+            });
+        }
+
+        _filter(item) {
+            return item.key != this.identity;
+        }
+
+        _getMessages(key, messages) {
+            return messages[key];
+        }
+
+        _usernameChanged(e) {
+            this.username = e.target.value;
+            this.socket.emit('username', e.target.value);
+            
+            e.target.value = '';
+        }
+
+        _messageChanged(e) {
+            this.updateMessages(e.target.id, `>> ${e.target.value}`);
+            this.socket.send({id: e.target.id, value: e.target.value});
+
+            e.target.value = '';
+        }
+    }
+    customElements.define(AbcClientApp.is, AbcClientApp);
+  </script>
+</dom-module>

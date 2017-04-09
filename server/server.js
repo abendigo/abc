@@ -32,6 +32,16 @@ io.on('connection', socket => {
 
     socket.on('message', data => {
         console.log('message', data);
+
+        if (data.id && data.value) 
+            socket.to(data.id).send({from: socket.id, value: data.value});
+    });
+
+    socket.on('username', username => {
+        // console.log('username:', socket.id, username)
+
+        users[socket.id].username = username;
+        io.sockets.emit('users', users);
     });
 
     socket.on('disconnect', reason => {
